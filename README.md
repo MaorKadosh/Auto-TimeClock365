@@ -10,7 +10,7 @@ from 5 minute a month to 20, from few keyboard clicks to few hounderds, meaning 
 
 # Prerequisites (any machine that runs crontab)
 1. Virtual machine (Debain-server) 1 core, 1GB Ram, 8-10GB storage.  # plaese read the note we you shouldn't use ubuntu for this.
-2. xvfb - virtual graphic environment in order to run Firefox in cli environment.
+2. xvfb - skinny virtual graphic environment in order to run Firefox in cli environment.
 3. Firefox - the script uses firefox cause it just the best broswer.
 4. Crontab - using ‘crontab -e’, to set the actual time the script will work. 
 
