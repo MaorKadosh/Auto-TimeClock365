@@ -31,7 +31,7 @@ crontab example: This means that the crontab wil run the code from sunday to thu
 # Note
 This script corrently works only on https://live.timeclock.com/login on its hebrew version.
 
-# How to setup LXC with firefox and virtual graphic environment,
+# How to setup LXC with firefox with xvfb virtual graphic environment,
 Debian OS should be used since ubuntu uses snapd to install firefox and it causes failures mustly on lxc containers.
 ```
 apt install xvfb
