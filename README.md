@@ -1,33 +1,43 @@
 # auto-timeclock365
-Is a script that meant to save time by automaticly "punch in" working hours, by automatically punch-in daily in certin hour (using crontab) and saves the after work.
+Is a script that meant to save time by automaticlly "punch in" working hours by automatically punch-in daily in certin hour (using crontab) and saves the after work.
 
 
 # Background story
-My working place salery team change its worker monthly hours time card calaculation system, in accordingly that system change consume alot more time and work.
+My working place salery team change its workers monthly hours time card calaculation system, in accordingly that system change consume alot more time and work from me.
 from 5 minute a month to 20, from few keyboard clicks to few hounderds, meaning I proactivly needs to interact with the system.
 
 # Prerequisites (any machine that runs crontab)
-1. Virtual machine (Debain-server) 1 core, 1GB Ram, 8-10GB storage.
+1. Virtual machine (Debain-server) 1 core, 1GB Ram, 8-10GB storage.  # plaese read the note we you shouldn't use ubuntu for this.
 2. xvfb - virtual graphic environment in order to run Firefox in cli environment.
 3. Firefox - the script uses firefox cause it just the best broswer.
 4. Crontab - using ‘crontab -e’, to set the actual time the script will work. 
 
+# Installation on the machine.
+1. git clone to the destintaion folder
+2. rename .env.example to .env.
+3. in (edit) .env file add your username, password and edit OPERSTIONAL flag to False in order to dry run.
+4. take the code for a spin.
+5. set scheduled in my case crontab, you can run on windows as well using the task scheduler.
+
+
 # Note
-This script works only on https://live.timeclock.com/login on its hebrew version.
+This script corrently works only on https://live.timeclock.com/login on its hebrew version.
 
 # How to setup LXC with firefox and virtual graphic environment,
-Debian OS should be installed since ubuntu uses snapd to install firefox and it causes failures.
-```apt install xvfb
+Debian OS should be used since ubuntu uses snapd to install firefox and it causes failures mustly on lxc containers.
+```
+apt install xvfb
 
 #after installation
 Xvfb :99 -ac &
 export DISPLAY=:99    
 
-#Then install firefox
+#Then install firefox from debian repo.
 apt install firefox-ers
 
-# ry run: login to the machine using ssh -X parameter and with a supported client and execute the following command.
+# dry run: login to the machine using ssh -X parameter and with a supported client and execute the following command.
 
 firefox  
 
-#After few seconds you should see firefox on you environment.```
+#After few seconds you should see firefox on you environment.
+```
