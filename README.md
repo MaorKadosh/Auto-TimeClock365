@@ -1,7 +1,6 @@
 # auto-timeclock365
 The ultimate way to punch in your working hours on live.timeclock365.com in a breaze.
-
-Is a script that meant to save time by automaticlly "punch in" working hours by automatically punch-in daily in certin hour (using crontab) and saves the after work.
+This script meant to save time by automaticlly "punch in" working hours by automatically punch-in daily in certin hour (using crontab) and saves the after work.
 
 
 # Background story
@@ -14,12 +13,14 @@ from 5 minute a month to 20, from few keyboard clicks to few hounderds, meaning 
 3. Firefox - the script uses firefox cause it just the best broswer.
 4. Crontab - using ‘crontab -e’, to set the actual time the script will work. 
 
-# Installation on the machine.
+# Installation on the machine (How to use the script).
 1. git clone to the destintaion folder
 2. rename .env.example to .env.
 3. in (edit) .env file add your username, password and edit OPERSTIONAL flag to False in order to dry run.
 4. take the code for a spin.
-5. set scheduled in my case crontab, you can run on windows as well using the task scheduler.
+5. set your working arrivel time and leaving time.
+6. change OPERSTIONAL flag to True.
+7. set scheduled in my case crontab, you can run on windows as well using the task scheduler.
 
 crontab example: This means that the crontab wil run the code from sunday to thursday every day on 18:35.
 ```
