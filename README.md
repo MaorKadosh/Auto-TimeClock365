@@ -18,6 +18,11 @@ from 5 minute a month to 20, from few keyboard clicks to few hounderds, meaning 
 3. in (edit) .env file add your username, password and edit OPERSTIONAL flag to False in order to dry run.
 4. take the code for a spin.
 5. set scheduled in my case crontab, you can run on windows as well using the task scheduler.
+crontab example: This means that the crontab wil run the code from sunday to thursday every day on 18:35.
+```
+ m h  dom mon dow   command
+35 18  *  *   0-4   cd /home/userdirectory/auto-timeclock365/; /usr/bin/python3 main.py
+```
 
 
 # Note
