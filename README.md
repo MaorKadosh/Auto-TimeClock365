@@ -10,11 +10,12 @@ from 5 minute a month to 20, from few keyboard clicks to few hounderds, meaning 
 1. Virtual machine (Debain-server) 1 core, 1GB Ram, 8-10GB storage.
 2. xvfb - virtual graphic environment in order to run Firefox in cli environment.
 3. Firefox - the script uses firefox cause it just the best broswer.
+4. Crontab - using ‘crontab -e’, to set the actual time the script will work. 
 
 # Note
 This script works only on https://live.timeclock.com/login on its hebrew version.
 
-#How to setup LXC with firefox and virtual graphic environment,
+# How to setup LXC with firefox and virtual graphic environment,
 Debian OS should be installed since ubuntu uses snapd to install firefox and it causes failures.
 ```apt install xvfb
 
@@ -25,7 +26,7 @@ export DISPLAY=:99
 #Then install firefox
 apt install firefox-ers
 
-#Dry run: login to the machine using ssh -X parameter and with a supported client and execute the following command.
+# ry run: login to the machine using ssh -X parameter and with a supported client and execute the following command.
 
 firefox  
 
