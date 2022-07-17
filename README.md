@@ -1,9 +1,9 @@
 # auto-timeclock365
-Is a script that meant to save time by automaticly "punch in" working hours, by automaticly punch-in daily in certin hour (using crontab).
+Is a script that meant to save time by automaticly "punch in" working hours, by automatically punch-in daily in certin hour (using crontab) and saves the after work.
 
 
 # Background story
-My working place salery team change its worker monthly hours time card calaculation software, in accordingly that system change consume alot more time and work.
+My working place salery team change its worker monthly hours time card calaculation system, in accordingly that system change consume alot more time and work.
 from 5 minute a month to 20, from few keyboard clicks to few hounderds, meaning I proactivly needs to interact with the system.
 
 # Prerequisites (any machine that runs crontab)
