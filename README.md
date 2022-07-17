@@ -1,4 +1,6 @@
 # auto-timeclock365
+The ultimate way to punch in your working ours in a breaze.
+
 Is a script that meant to save time by automaticlly "punch in" working hours by automatically punch-in daily in certin hour (using crontab) and saves the after work.
 
 
