@@ -1,6 +1,6 @@
 # auto-timeclock365
 The ultimate way to punch in your working hours on live.timeclock365.com in a breaze.
-This script meant to save time by automaticlly "punch in" working hours by automatically punch-in daily in certin hour (using crontab) and saves the after work.
+This script meant to save time by "punch in" working hours automatically daily in certin hour (using crontab) and saves the after work.
 
 
 # Background story
