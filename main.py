@@ -191,7 +191,7 @@ def login(web_page):
 
 def main():
     logging.basicConfig(filename='./app.log', filemode="w",
-                        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
+                        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
     logging.info('Starting Auto Punch In Script.')
 
     web_page = init()
