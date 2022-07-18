@@ -33,8 +33,8 @@ def init():
     """
         Init a Selenium base on the OS and loads a web page using .env BASE_URL argument.
 
-        :return webdriver: initiated webdriver with Firefox page loaded with BASE_URL page.
-        :rtype: WebDriver
+        :return WebElement: initiated webdriver with Firefox page loaded with BASE_URL page.
+        :rtype: WebElement
     """
     logging.info("Initializing Browser")
     try:
@@ -62,14 +62,38 @@ def init():
 def validate_field_write(element, field_content):
     """validating if field is filed with the right data, returned true if success.
 
-    :param element: WebDriver element that should be inspected.
+    :param element: WebElement element that should be inspected.
     :param field_content: The original content the operation trying to insert to field.
-    :type element: WebDriver
+    :type element: WebElement
     :type field_content: str
     :rtype: bool
     """
-    logging.debug(f"""validating values element: {element.get_attribute("Value")} field_content: {field_content}""")
-    return element.get_attribute("Value") == field_content
+    logging.debug(f"""validating values element: {element.get_dom_attribute("Value")} field_content: {field_content}""")
+    return element.get_dom_attribute("Value") == field_content
+
+
+def field_assert(element, field_content):
+    """Asserting content to field and validating the content is successfully in the field.
+
+    if assertion fails 5 times raises AssertionError.
+
+    :param element: WebElement element that should be inspected.
+    :param field_content: The original content the operation trying to insert to field.
+    :type element: webdriver.remote.webelement
+    :type field_content: str
+    :raise AssertionError
+    :rtype: None
+    """
+    for i in range(5):  # trying to assert 5 times
+        if not validate_field_write(element, field_content):    # if field_content data not in the field send again.
+            sleep(0.1)
+            element.send_keys(field_content)
+            sleep(0.2)
+        else:   # if field_content data can be found in the field break.
+            break
+    else:   # if the loop running 5 times meaning that the assertion fails and exception should raise.
+        logging.info(f"Unable to assert of {field_content} to field name {element.get_dom_attribute('value')}")
+        raise AssertionError(f"Unable to assert of {field_content} to field name {element.get_dom_attribute('value')}")
 
 
 def navigate_to_time_card(web_page):
@@ -112,11 +136,12 @@ def punch_in(web_page):
     else:
         # Filling shift start time
         punch_create_elem[0].clear()
-        punch_create_elem[0].send_keys(strftime("%d.%m.20%y, ") + SHIFT_START_TIME)
-
+        # send keys without validation since was unable to read field value.
+        punch_create_elem[0].send_keys(str(strftime("%d.%m.20%y, ") + SHIFT_START_TIME))
         # Filling shift end time
         punch_create_elem[1].clear()
-        punch_create_elem[1].send_keys(strftime("%d.%m.20%y, ") + SHIFT_END_TIME)
+        # send keys without validation since was unable to read field value
+        punch_create_elem[1].send_keys(str(strftime("%d.%m.20%y, ") + SHIFT_END_TIME))
 
         # Click on the submit button to punch in if OPERATIONAL set to True.
         if OPERATIONAL:
@@ -131,54 +156,36 @@ def login(web_page):
 
     using the Username and Password form .env file.
 
-    :param web_page: WebDriver - Firefox page loaded at BASE_URL.
-    :type web_page: WebDriver
+    :param web_page: WebElement - Firefox page loaded at BASE_URL.
+    :type web_page: WebElement
     :raise Exception: undefinable or unloaded elements.
     :returns: None
     :rtype: None
     """
 
-    # Handling possible exception when not finding username field.
-    logging.info("Start login to timecloick365.com")
+    logging.info("Start login to timeclock365.com")
+    # looking for username field.
     try:
         user_elem = web_page.find_element(By.NAME, "username")
+        field_assert(user_elem, USERNAME)
     except Exception as e:
         logging.info(f"Caught and exception while log in \n {e}")
         reporter("Failed to find username field, closing the script")
-        print(str(e) + "Failed to find username field, closing the script")
-        # web_page.close()
-
+        web_page.close()
     else:
-        for i in range(5):
-            if not validate_field_write(user_elem, USERNAME):
-                user_elem.send_keys(USERNAME)
-            else:
-                user_elem.send_keys(Keys.ENTER)
-                break
-        else:
-            logging.info(f"Caught an exception while login: unable to fill the username field.")
-            raise Exception("Error: Unable to fill username field.")
+        user_elem.send_keys(Keys.ENTER)
 
-    # Handling possible exception when finding password field, upon finding filing the password
+    # looking for password field.
     try:
         pass_elem = WebDriverWait(web_page, 10, poll_frequency=1).until(EC.presence_of_element_located((By.NAME, "password")))
         sleep(0.5)
+        field_assert(pass_elem, PASSWORD)
     except Exception as e:
         logging.info(f"Failed to find password field, closing the script, maybe invalid username \n {e}")
         reporter(f"Failed to find password field, closing the script, maybe invalid username \n {e}")
-        print(str(e) + "Failed to find password field, closing the script, maybe invalid username")
-        # web_page.close()
-
+        web_page.close()
     else:
-        for i in range(5):
-            if not validate_field_write(pass_elem, PASSWORD):
-                pass_elem.send_keys(PASSWORD)
-            else:
-                web_page.find_element(By.CLASS_NAME, "login-page__submit").click()
-                break
-        else:
-            logging.info("Caught an exception while login: unable to fill the username field.")
-            raise Exception("Error: Unable to fill password field.")
+        web_page.find_element(By.CLASS_NAME, "login-page__submit").click()
     logging.info("Finish login.")
 
 
