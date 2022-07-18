@@ -16,10 +16,10 @@ from 5 minute a month to 20, from few keyboard clicks to few hounderds, meaning 
 # Installation on the machine (How to use the script).
 1. git clone to the destintaion folder
 2. rename .env.example to .env.
-3. in (edit) .env file add your username, password and edit OPERSTIONAL flag to False in order to dry run.
+3. in (edit) .env file add your username, password and edit OPERATIONAL flag to False in order to dry run.
 4. take the code for a spin.
 5. set your working arrivel time and leaving time.
-6. change OPERSTIONAL flag to True.
+6. change OPERATIONAL flag to True.
 7. set scheduled in my case crontab, you can run on windows as well using the task scheduler.
 
 crontab example: This means that the crontab wil run the code from sunday to thursday every day on 18:35.
