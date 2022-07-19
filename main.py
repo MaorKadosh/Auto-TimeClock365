@@ -172,11 +172,11 @@ def punch_in(web_page):
     else:
         # Filling shift start time
         # send keys without validation since was unable to read field value.
-        punch_create_elem[0].send_keys(str(strftime("%d.%m.20%y, ") + SHIFT_START_TIME))
+        punch_create_elem[0].send_keys(SHIFT_START_TIME)
         # Filling shift end time
         punch_create_elem[1].clear()
         # send keys without validation since was unable to read field value
-        punch_create_elem[1].send_keys(str(strftime("%d.%m.20%y, ") + SHIFT_END_TIME))
+        punch_create_elem[1].send_keys(SHIFT_END_TIME)
 
 
         # Click on the submit button to punch in if OPERATIONAL set to True.
