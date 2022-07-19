@@ -19,13 +19,13 @@ BASE_URL = os.getenv("BASE_URL")
 USERNAME = os.getenv("TIME_CLOCK365_USERNAME")
 PASSWORD = os.getenv("TIME_CLOCK365_PASSWORD")
 os.environ["GH_TOKEN"] = os.getenv("GH_TOKEN")
-SHIFT_START_TIME = os.getenv("SHIFT_START_TIME")
-SHIFT_END_TIME = os.getenv("SHIFT_END_TIME")
+SHIFT_START_TIME = strftime("%d.%m.20%y, ") + os.getenv("SHIFT_START_TIME")
+SHIFT_END_TIME = strftime("%d.%m.20%y, ") + os.getenv("SHIFT_END_TIME")
 HEADLESS = True if os.getenv("HEADLESS") == 'True' else False
 OPERATIONAL = True if os.getenv("OPERATIONAL") == 'True' else False
 
 
-def reporter(exception):
+def reporter(exception, image_path=f"daily-shift-{strftime('%d.%m.20%y')}.png"):
     pass
 
 
@@ -57,6 +57,40 @@ def init():
     else:
         logging.info("Finish Initializing Browser")
         return web_page
+
+
+def validate_punch_in(web_page, working_hours):
+    """validating if the daily working hours was successfully added to time card.
+
+    in any case report with image will be sent and log will be taken.
+    :param web_page:
+    :param working_hours:
+    :type web_page: WebDriver
+    :type working_hours: list[str]
+    :return: None
+    """
+    try:
+        time_card_table = web_page.find_elements(By.CLASS_NAME, "data-row")
+        punch_time_row_element = time_card_table[0].find_elements(By.CLASS_NAME, "punch_flex")
+
+    except Exception as e:
+        logging.info(f"Caught exception when searching for time card elements. \n {e}")
+    else:
+        # converting list to strings.
+        timeclock_shift_start_time = ", ".join(punch_time_row_element[0].text.replace("/", ".").replace(" ", "").split("\n"))
+        timeclock_shift_end_time = ", ".join(punch_time_row_element[1].text.replace("/", ".").replace(" ", "").split("\n"))
+
+        # converting string year format 19.07.22 -> 19.07.2022
+        timeclock_shift_start_time = timeclock_shift_start_time.replace("22", strftime('20%y'))
+        timeclock_shift_end_time = timeclock_shift_end_time.replace("22", strftime('20%y'))
+
+        if (timeclock_shift_start_time == working_hours[0]) and (timeclock_shift_end_time == working_hours[1]):
+            time_card_table[0].screenshot(f"daily-shift-{strftime('%d.%m.20%y')}.png")
+            reporter("Successfully create shifts for today.", "daily-shift-{strftime('%d.%m.20%y')}.png")
+            logging.info(f"shifts for {strftime('%d.%m.20%y')} successfully validated")
+        else:
+            reporter("Failed to validate your shifts please check them manually.")
+            logging.info("Failed to validate your shifts please check them manually.")
 
 
 def validate_field_write(element, field_content):
@@ -108,11 +142,12 @@ def navigate_to_time_card(web_page):
         WebDriverWait(web_page, 15).until(EC.presence_of_element_located((By.CLASS_NAME, "first"))).click()
         timecard_elem = WebDriverWait(web_page, 15).until(EC.presence_of_all_elements_located((By.LINK_TEXT, "דיווח נוכחות")))[1]
         timecard_elem.click()
+
     except Exception as e:
         logging.info(f"Caught and exception while Navigating to time card.\n {e}")
         reporter("Field to navigate to timecard page")
         print(str(e) + "\nField to navigate to timecard page")
-        # web_page.close()
+        web_page.close()
 
     logging.info("Finish Navigating to time card.")
 
@@ -121,6 +156,7 @@ def punch_in(web_page):
     """
     Gets session on time card page finds punch in and out elements.
 
+    punch in the working hours and calls validation func for reporting the user.
     :param web_page: WebDriver - Time card Firefox page.
     :type web_page: WebDriver
     :rtype: None
@@ -135,7 +171,6 @@ def punch_in(web_page):
         print(str(e) + "start and end shift fields")
     else:
         # Filling shift start time
-        punch_create_elem[0].clear()
         # send keys without validation since was unable to read field value.
         punch_create_elem[0].send_keys(str(strftime("%d.%m.20%y, ") + SHIFT_START_TIME))
         # Filling shift end time
@@ -143,10 +178,12 @@ def punch_in(web_page):
         # send keys without validation since was unable to read field value
         punch_create_elem[1].send_keys(str(strftime("%d.%m.20%y, ") + SHIFT_END_TIME))
 
+
         # Click on the submit button to punch in if OPERATIONAL set to True.
         if OPERATIONAL:
             logging.info("Saving shifts by clicking on the save button.")
             web_page.find_element(By.NAME, "btn_create_and_list").click()
+            validate_punch_in(web_page, [SHIFT_START_TIME, SHIFT_END_TIME])
     logging.info("Finish Saving shifts.")
 
 
