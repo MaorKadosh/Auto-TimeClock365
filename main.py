@@ -29,12 +29,12 @@ def reporter(exception, image_path=f"daily-shift-{strftime('%d.%m.20%y')}.png"):
     pass
 
 
-def init():
+def init() -> webdriver.firefox:
     """
         Init a Selenium base on the OS and loads a web page using .env BASE_URL argument.
 
-        :return WebElement: initiated webdriver with Firefox page loaded with BASE_URL page.
-        :rtype: WebElement
+        :return webdriver: initiated webdriver with Firefox page loaded with BASE_URL page.
+        :rtype: webdriver
     """
     logging.info("Initializing Browser")
     try:
@@ -59,13 +59,13 @@ def init():
         return web_page
 
 
-def validate_punch_in(web_page, working_hours):
+def validate_punch_in(web_page: webdriver.Firefox, working_hours: list[str]) -> None :
     """validating if the daily working hours was successfully added to time card.
 
     in any case report with image will be sent and log will be taken.
     :param web_page:
     :param working_hours:
-    :type web_page: WebDriver
+    :type web_page: webdriver
     :type working_hours: list[str]
     :return: None
     """
@@ -93,12 +93,12 @@ def validate_punch_in(web_page, working_hours):
             logging.info("Failed to validate your shifts please check them manually.")
 
 
-def validate_field_write(element, field_content):
+def validate_field_write(element: webdriver.Remote._web_element_cls , field_content: str) -> bool:
     """validating if field is filed with the right data, returned true if success.
 
     :param element: WebElement element that should be inspected.
     :param field_content: The original content the operation trying to insert to field.
-    :type element: WebElement
+    :type element: webdriver
     :type field_content: str
     :rtype: bool
     """
@@ -106,14 +106,14 @@ def validate_field_write(element, field_content):
     return element.get_dom_attribute("Value") == field_content
 
 
-def field_assert(element, field_content):
+def field_assert(element: webdriver.Remote._web_element_cls, field_content: str) -> None:
     """Asserting content to field and validating the content is successfully in the field.
 
     if assertion fails 5 times raises AssertionError.
 
     :param element: WebElement element that should be inspected.
     :param field_content: The original content the operation trying to insert to field.
-    :type element: webdriver.remote.webelement
+    :type element: webdriver.remode.webelement
     :type field_content: str
     :raise AssertionError
     :rtype: None
@@ -130,7 +130,7 @@ def field_assert(element, field_content):
         raise AssertionError(f"Unable to assert of {field_content} to field name {element.get_dom_attribute('value')}")
 
 
-def navigate_to_time_card(web_page):
+def navigate_to_time_card(web_page: webdriver.Firefox) -> None:
     """
     Gets already logged in live.timeclock365.com panel and only navigates to the time card page.
 
@@ -152,7 +152,7 @@ def navigate_to_time_card(web_page):
     logging.info("Finish Navigating to time card.")
 
 
-def punch_in(web_page):
+def punch_in(web_page: webdriver.Firefox) -> None:
     """
     Gets session on time card page finds punch in and out elements.
 
@@ -187,14 +187,14 @@ def punch_in(web_page):
     logging.info("Finish Saving shifts.")
 
 
-def login(web_page):
+def login(web_page: webdriver.Firefox) -> None:
     """
     Gets Firefox page loaded at BASE_URL and tries to log in to live.timeclock.com
 
     using the Username and Password form .env file.
 
-    :param web_page: WebElement - Firefox page loaded at BASE_URL.
-    :type web_page: WebElement
+    :param web_page: webdriver - Firefox page loaded at BASE_URL.
+    :type web_page: webdriver
     :raise Exception: undefinable or unloaded elements.
     :returns: None
     :rtype: None
