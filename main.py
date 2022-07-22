@@ -1,3 +1,5 @@
+from cgitb import text
+from distutils.log import info
 import os
 import logging
 import traceback
@@ -12,6 +14,7 @@ from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from webdriver_manager.firefox import GeckoDriverManager
 from selenium.webdriver.support import expected_conditions as EC
+from telegram import Bot
 
 
 load_dotenv(".env")
@@ -23,11 +26,22 @@ SHIFT_START_TIME = strftime("%d.%m.20%y, ") + os.getenv("SHIFT_START_TIME")
 SHIFT_END_TIME = strftime("%d.%m.20%y, ") + os.getenv("SHIFT_END_TIME")
 HEADLESS = True if os.getenv("HEADLESS") == 'True' else False
 OPERATIONAL = True if os.getenv("OPERATIONAL") == 'True' else False
+TELEGRAM_TOKETN = os.getenv("TELEGRAM_TOKEN")
+TELEGRAM_ID = int(os.getenv("TELEGRAM_USER_ID"))
 
 
-def reporter(exception, image_path=f"daily-shift-{strftime('%d.%m.20%y')}.png"):
-    pass
-
+def reporter(message: str, image_path: str=None) -> None:
+    logging.info(f"Start reporting using telegram")
+    try:    
+        reporter = Bot(TELEGRAM_TOKETN)
+        reporter.send_message(chat_id=TELEGRAM_ID, text=message)
+        if image_path:
+            reporter.send_photo(chat_id=TELEGRAM_ID, photo=open(image_path, 'rb'))
+    except Exception as e:
+        logging.critical(f"Reporter caught an expetion: \n{e}")
+    finally:
+        reporter.close()
+    logging.info(f"Finish reporting")
 
 def init() -> webdriver.Firefox:
     """
@@ -184,6 +198,8 @@ def punch_in(web_page: webdriver.Firefox) -> None:
             logging.info("Saving shifts by clicking on the save button.")
             web_page.find_element(By.NAME, "btn_create_and_list").click()
             validate_punch_in(web_page, [SHIFT_START_TIME, SHIFT_END_TIME])
+        else:
+            logging.warning(f"OPERATIONAL flag set to {OPERATIONAL}, note that shift not saved.")
     logging.info("Finish Saving shifts.")
 
 
