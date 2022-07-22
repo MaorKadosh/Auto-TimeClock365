@@ -29,7 +29,7 @@ def reporter(exception, image_path=f"daily-shift-{strftime('%d.%m.20%y')}.png"):
     pass
 
 
-def init() -> webdriver.firefox:
+def init() -> webdriver.Firefox:
     """
         Init a Selenium base on the OS and loads a web page using .env BASE_URL argument.
 
@@ -230,7 +230,6 @@ def main():
     logging.basicConfig(filename='./app.log', filemode="w",
                         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
     logging.info('Starting Auto Punch In Script.')
-
     web_page = init()
     login(web_page)
     navigate_to_time_card(web_page)
