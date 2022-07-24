@@ -1,22 +1,20 @@
-from cgitb import text
-from distutils.log import info
 import os
 import logging
-import traceback
 from time import sleep
 from sys import platform
 from time import strftime
 from dotenv import load_dotenv
 from selenium import webdriver
+from telegram.ext import ExtBot 
+from telegram import TelegramError
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from webdriver_manager.firefox import GeckoDriverManager
 from selenium.webdriver.support import expected_conditions as EC
-from telegram import Bot
 
-
+# Loads constants
 load_dotenv(".env")
 BASE_URL = os.getenv("BASE_URL")
 USERNAME = os.getenv("TIME_CLOCK365_USERNAME")
@@ -26,21 +24,21 @@ SHIFT_START_TIME = strftime("%d.%m.20%y, ") + os.getenv("SHIFT_START_TIME")
 SHIFT_END_TIME = strftime("%d.%m.20%y, ") + os.getenv("SHIFT_END_TIME")
 HEADLESS = True if os.getenv("HEADLESS") == 'True' else False
 OPERATIONAL = True if os.getenv("OPERATIONAL") == 'True' else False
-TELEGRAM_TOKETN = os.getenv("TELEGRAM_TOKEN")
+TELEGRAM_TOKETN = os.getenv("TELEGRAM_TOKEN")   
 TELEGRAM_ID = int(os.getenv("TELEGRAM_USER_ID"))
 
 
 def reporter(message: str, image_path: str=None) -> None:
     logging.info(f"Start reporting using telegram")
-    try:    
-        reporter = Bot(TELEGRAM_TOKETN)
+    try:
+        reporter = ExtBot(TELEGRAM_TOKETN)
         reporter.send_message(chat_id=TELEGRAM_ID, text=message)
         if image_path:
-            reporter.send_photo(chat_id=TELEGRAM_ID, photo=open(image_path, 'rb'))
-    except Exception as e:
+            with open(image_path, 'rb') as image:
+                reporter.send_photo(chat_id=TELEGRAM_ID, photo=image)
+    except TelegramError as e:
         logging.critical(f"Reporter caught an expetion: \n{e}")
-    finally:
-        reporter.close()
+   
     logging.info(f"Finish reporting")
 
 def init() -> webdriver.Firefox:
@@ -65,7 +63,7 @@ def init() -> webdriver.Firefox:
     except Exception as e:
         reporter("Failed to init FireFox client and get to the page.")
         logging.info(f"Caught and exception while Initializing Browser \n {e}")
-        print(str(traceback.print_exc()) + "\nFailed to init FireFox client and get to the page.")
+        print("\nFailed to init FireFox client and get to the page.")
         # web_page.close()
 
     else:
