@@ -98,7 +98,7 @@ def validate_punch_in(web_page: webdriver.Firefox, working_hours: list[str]) -> 
 
         if (timeclock_shift_start_time == working_hours[0]) and (timeclock_shift_end_time == working_hours[1]):
             time_card_table[0].screenshot(f"daily-shift-{strftime('%d.%m.20%y')}.png")
-            reporter("Successfully create shifts for today.", "daily-shift-{strftime('%d.%m.20%y')}.png")
+            reporter("Successfully create shifts for today.", f"daily-shift-{strftime('%d.%m.20%y')}.png")
             logging.info(f"shifts for {strftime('%d.%m.20%y')} successfully validated")
         else:
             reporter("Failed to validate your shifts please check them manually.")
