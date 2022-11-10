@@ -17,6 +17,7 @@ from selenium.webdriver.support import expected_conditions as EC
 # Loads constants
 load_dotenv(".env")
 BASE_URL = os.getenv("BASE_URL")
+TIMECARD_URL = os.getenv("TIMECARD_URL")
 USERNAME = os.getenv("TIME_CLOCK365_USERNAME")
 PASSWORD = os.getenv("TIME_CLOCK365_PASSWORD")
 os.environ["GH_TOKEN"] = os.getenv("GH_TOKEN")
@@ -151,14 +152,15 @@ def navigate_to_time_card(web_page: webdriver.Firefox) -> None:
     """
     logging.info("Navigating to time card started.")
     try:
-        WebDriverWait(web_page, 15).until(EC.presence_of_element_located((By.CLASS_NAME, "first"))).click()
-        timecard_elem = WebDriverWait(web_page, 15).until(EC.presence_of_all_elements_located((By.LINK_TEXT, "דיווח נוכחות")))[1]
-        timecard_elem.click()
+        WebDriverWait(web_page, 15).until(EC.presence_of_element_located((By.CLASS_NAME, "first")))
+        web_page.get(TIMECARD_URL)
+        timecard_elem = WebDriverWait(web_page, 10).until(EC.presence_of_all_elements_located((By.CLASS_NAME, 'first')))
+        timecard_elem[3].click()
 
     except Exception as e:
         logging.info(f"Caught and exception while Navigating to time card.\n {e}")
         reporter("Field to navigate to timecard page")
-        print(str(e) + "\nField to navigate to timecard page")
+        print(f'Field to navigate to timecard page\n {e}')
         web_page.close()
 
     logging.info("Finish Navigating to time card.")
@@ -176,7 +178,7 @@ def punch_in(web_page: webdriver.Firefox) -> None:
     logging.info("Started to punch in time shifts.")
     try:
         # Finding the start and end shift fields.
-        punch_create_elem = web_page.find_elements(By.CLASS_NAME, "sonata-medium-date")
+        punch_create_elem = WebDriverWait(web_page, 10).until(EC.presence_of_all_elements_located((By.CLASS_NAME, "sonata-medium-date")))
     except Exception as e:
         logging.info(f"Caught an exception while punch in time shifts. \n {e}")
         reporter("Can't find start and end shift fields.")
@@ -184,6 +186,7 @@ def punch_in(web_page: webdriver.Firefox) -> None:
     else:
         # Filling shift start time
         # send keys without validation since was unable to read field value.
+        
         punch_create_elem[0].send_keys(SHIFT_START_TIME)
         # Filling shift end time
         punch_create_elem[1].clear()
