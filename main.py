@@ -10,6 +10,7 @@ from telegram import TelegramError
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.support.ui import WebDriverWait
 from webdriver_manager.firefox import GeckoDriverManager
 from selenium.webdriver.support import expected_conditions as EC
@@ -56,9 +57,9 @@ def init() -> webdriver.Firefox:
 
         # Check running OS in order to start session correctly.
         if "win32" in platform:
-            web_page = webdriver.Firefox(options=opt, executable_path=GeckoDriverManager().install())
+            web_page = webdriver.Firefox(options=opt, service=Service(GeckoDriverManager().install()))
         else:
-            web_page = webdriver.Firefox(options=opt, executable_path=GeckoDriverManager().install())
+            web_page = webdriver.Firefox(options=opt, service=Service(GeckoDriverManager().install()))
         web_page.get(BASE_URL)
 
     except Exception as e:
