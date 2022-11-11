@@ -38,7 +38,7 @@ def reporter(message: str, image_path: str=None) -> None:
             with open(image_path, 'rb') as image:
                 reporter.send_photo(chat_id=TELEGRAM_ID, photo=image)
     except TelegramError as e:
-        logging.critical(f"Reporter caught an expetion: \n{e}")
+        logging.critical(f"Reporter caught an expetion unable to send messages to users: \n{e}\nend of Telegram exception")
    
     logging.info(f"Finish reporting")
 
@@ -65,14 +65,14 @@ def init() -> webdriver.Firefox:
         reporter("Failed to init FireFox client and get to the page.")
         logging.info(f"Caught and exception while Initializing Browser \n {e}")
         print("\nFailed to init FireFox client and get to the page.")
-        # web_page.close()
+        web_page.close()
 
     else:
         logging.info("Finish Initializing Browser")
         return web_page
 
 
-def validate_punch_in(web_page: webdriver.Firefox, working_hours: list[str]) -> None :
+def validate_punch_in(web_page: webdriver.Firefox) -> None :
     """validating if the daily working hours was successfully added to time card.
 
     in any case report with image will be sent and log will be taken.
@@ -83,6 +83,7 @@ def validate_punch_in(web_page: webdriver.Firefox, working_hours: list[str]) -> 
     :return: None
     """
     try:
+        # Finding the last added element in order to compare it to the current punch in shift.
         time_card_table = web_page.find_elements(By.CLASS_NAME, "data-row")
         punch_time_row_element = time_card_table[0].find_elements(By.CLASS_NAME, "punch_flex")
 
@@ -97,7 +98,8 @@ def validate_punch_in(web_page: webdriver.Firefox, working_hours: list[str]) -> 
         timeclock_shift_start_time = timeclock_shift_start_time.replace("22", strftime('20%y'))
         timeclock_shift_end_time = timeclock_shift_end_time.replace("22", strftime('20%y'))
 
-        if (timeclock_shift_start_time == working_hours[0]) and (timeclock_shift_end_time == working_hours[1]):
+        # comparing shift info with puched in.
+        if (timeclock_shift_start_time == SHIFT_START_TIME) and (timeclock_shift_end_time == SHIFT_END_TIME):
             time_card_table[0].screenshot(f"daily-shift-{strftime('%d.%m.20%y')}.png")
             reporter("Successfully create shifts for today.", f"daily-shift-{strftime('%d.%m.20%y')}.png")
             logging.info(f"shifts for {strftime('%d.%m.20%y')} successfully validated")
@@ -178,7 +180,7 @@ def punch_in(web_page: webdriver.Firefox) -> None:
     logging.info("Started to punch in time shifts.")
     try:
         # Finding the start and end shift fields.
-        punch_create_elem = WebDriverWait(web_page, 10).until(EC.presence_of_all_elements_located((By.CLASS_NAME, "sonata-medium-date")))
+        start_shift_element, end_shift_element = WebDriverWait(web_page, 10).until(EC.presence_of_all_elements_located((By.CLASS_NAME, "sonata-medium-date")))
     except Exception as e:
         logging.info(f"Caught an exception while punch in time shifts. \n {e}")
         reporter("Can't find start and end shift fields.")
@@ -186,19 +188,19 @@ def punch_in(web_page: webdriver.Firefox) -> None:
     else:
         # Filling shift start time
         # send keys without validation since was unable to read field value.
-        
-        punch_create_elem[0].send_keys(SHIFT_START_TIME)
+        start_shift_element.clear()
+        start_shift_element.send_keys(SHIFT_START_TIME)
         # Filling shift end time
-        punch_create_elem[1].clear()
         # send keys without validation since was unable to read field value
-        punch_create_elem[1].send_keys(SHIFT_END_TIME)
+        end_shift_element.clear()
+        end_shift_element.send_keys(SHIFT_END_TIME)
 
 
         # Click on the submit button to punch in if OPERATIONAL set to True.
         if OPERATIONAL:
             logging.info("Saving shifts by clicking on the save button.")
             web_page.find_element(By.NAME, "btn_create_and_list").click()
-            validate_punch_in(web_page, [SHIFT_START_TIME, SHIFT_END_TIME])
+            validate_punch_in(web_page)
         else:
             logging.warning(f"OPERATIONAL flag set to {OPERATIONAL}, note that shift not saved.")
     logging.info("Finish Saving shifts.")
