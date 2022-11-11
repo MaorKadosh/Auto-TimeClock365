@@ -58,7 +58,7 @@ def init() -> webdriver.Firefox:
         if "win32" in platform:
             web_page = webdriver.Firefox(options=opt, executable_path=GeckoDriverManager().install())
         else:
-            web_page = webdriver.Firefox(options=opt)
+            web_page = webdriver.Firefox(options=opt, executable_path=GeckoDriverManager().install())
         web_page.get(BASE_URL)
 
     except Exception as e:
