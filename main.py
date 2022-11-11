@@ -65,7 +65,7 @@ def init() -> webdriver.Firefox:
         reporter("Failed to init FireFox client and get to the page.")
         logging.info(f"Caught and exception while Initializing Browser \n {e}")
         print("\nFailed to init FireFox client and get to the page.")
-        # web_page.close()
+        web_page.close()
 
     else:
         logging.info("Finish Initializing Browser")
@@ -178,7 +178,7 @@ def punch_in(web_page: webdriver.Firefox) -> None:
     logging.info("Started to punch in time shifts.")
     try:
         # Finding the start and end shift fields.
-        punch_create_elem = WebDriverWait(web_page, 10).until(EC.presence_of_all_elements_located((By.CLASS_NAME, "sonata-medium-date")))
+        start_shift_element, end_shift_element = WebDriverWait(web_page, 10).until(EC.presence_of_all_elements_located((By.CLASS_NAME, "sonata-medium-date")))
     except Exception as e:
         logging.info(f"Caught an exception while punch in time shifts. \n {e}")
         reporter("Can't find start and end shift fields.")
@@ -186,12 +186,12 @@ def punch_in(web_page: webdriver.Firefox) -> None:
     else:
         # Filling shift start time
         # send keys without validation since was unable to read field value.
-        
-        punch_create_elem[0].send_keys(SHIFT_START_TIME)
+        start_shift_element.clear()
+        start_shift_element.send_keys(SHIFT_START_TIME)
         # Filling shift end time
-        punch_create_elem[1].clear()
         # send keys without validation since was unable to read field value
-        punch_create_elem[1].send_keys(SHIFT_END_TIME)
+        end_shift_element.clear()
+        end_shift_element.send_keys(SHIFT_END_TIME)
 
 
         # Click on the submit button to punch in if OPERATIONAL set to True.
