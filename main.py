@@ -62,6 +62,7 @@ def init() -> webdriver.Firefox:
             web_page = webdriver.Firefox(options=opt, service=Service(GeckoDriverManager().install()))
         web_page.get(BASE_URL)
 
+
     except Exception as e:
         reporter("Failed to init FireFox client and get to the page.")
         logging.info(f"Caught and exception while Initializing Browser \n {e}")
@@ -223,7 +224,8 @@ def login(web_page: webdriver.Firefox) -> None:
     logging.info("Start login to timeclock365.com")
     # looking for username field.
     try:
-        user_elem = web_page.find_element(By.NAME, "username")
+        user_elem = WebDriverWait(web_page, 15).until(EC.presence_of_element_located((By.NAME, "username")))
+        #user_elem = web_page.find_element(By.NAME, "username")
         field_assert(user_elem, USERNAME)
     except Exception as e:
         logging.info(f"Caught and exception while log in \n {e}")
@@ -234,7 +236,7 @@ def login(web_page: webdriver.Firefox) -> None:
 
     # looking for password field.
     try:
-        pass_elem = WebDriverWait(web_page, 10, poll_frequency=1).until(EC.presence_of_element_located((By.NAME, "password")))
+        pass_elem = WebDriverWait(web_page, 15).until(EC.presence_of_element_located((By.NAME, "password")))
         sleep(0.5)
         field_assert(pass_elem, PASSWORD)
     except Exception as e:
