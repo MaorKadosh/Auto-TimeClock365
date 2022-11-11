@@ -38,7 +38,7 @@ def reporter(message: str, image_path: str=None) -> None:
             with open(image_path, 'rb') as image:
                 reporter.send_photo(chat_id=TELEGRAM_ID, photo=image)
     except TelegramError as e:
-        logging.critical(f"Reporter caught an expetion: \n{e}")
+        logging.critical(f"Reporter caught an expetion unable to send messages to users: \n{e}\nend of Telegram exception")
    
     logging.info(f"Finish reporting")
 
@@ -83,6 +83,7 @@ def validate_punch_in(web_page: webdriver.Firefox, working_hours: list[str]) -> 
     :return: None
     """
     try:
+        # Finding the last added element in order to compare it to the current punch in shift.
         time_card_table = web_page.find_elements(By.CLASS_NAME, "data-row")
         punch_time_row_element = time_card_table[0].find_elements(By.CLASS_NAME, "punch_flex")
 
@@ -97,6 +98,7 @@ def validate_punch_in(web_page: webdriver.Firefox, working_hours: list[str]) -> 
         timeclock_shift_start_time = timeclock_shift_start_time.replace("22", strftime('20%y'))
         timeclock_shift_end_time = timeclock_shift_end_time.replace("22", strftime('20%y'))
 
+        # comparing shift info with puched in info.
         if (timeclock_shift_start_time == working_hours[0]) and (timeclock_shift_end_time == working_hours[1]):
             time_card_table[0].screenshot(f"daily-shift-{strftime('%d.%m.20%y')}.png")
             reporter("Successfully create shifts for today.", f"daily-shift-{strftime('%d.%m.20%y')}.png")
