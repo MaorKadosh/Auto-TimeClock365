@@ -72,7 +72,7 @@ def init() -> webdriver.Firefox:
         return web_page
 
 
-def validate_punch_in(web_page: webdriver.Firefox, working_hours: list[str]) -> None :
+def validate_punch_in(web_page: webdriver.Firefox) -> None :
     """validating if the daily working hours was successfully added to time card.
 
     in any case report with image will be sent and log will be taken.
@@ -98,8 +98,8 @@ def validate_punch_in(web_page: webdriver.Firefox, working_hours: list[str]) -> 
         timeclock_shift_start_time = timeclock_shift_start_time.replace("22", strftime('20%y'))
         timeclock_shift_end_time = timeclock_shift_end_time.replace("22", strftime('20%y'))
 
-        # comparing shift info with puched in info.
-        if (timeclock_shift_start_time == working_hours[0]) and (timeclock_shift_end_time == working_hours[1]):
+        # comparing shift info with puched in.
+        if (timeclock_shift_start_time == SHIFT_START_TIME) and (timeclock_shift_end_time == SHIFT_END_TIME):
             time_card_table[0].screenshot(f"daily-shift-{strftime('%d.%m.20%y')}.png")
             reporter("Successfully create shifts for today.", f"daily-shift-{strftime('%d.%m.20%y')}.png")
             logging.info(f"shifts for {strftime('%d.%m.20%y')} successfully validated")
@@ -200,7 +200,7 @@ def punch_in(web_page: webdriver.Firefox) -> None:
         if OPERATIONAL:
             logging.info("Saving shifts by clicking on the save button.")
             web_page.find_element(By.NAME, "btn_create_and_list").click()
-            validate_punch_in(web_page, [SHIFT_START_TIME, SHIFT_END_TIME])
+            validate_punch_in(web_page)
         else:
             logging.warning(f"OPERATIONAL flag set to {OPERATIONAL}, note that shift not saved.")
     logging.info("Finish Saving shifts.")
