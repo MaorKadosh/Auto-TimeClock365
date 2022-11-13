@@ -156,7 +156,7 @@ def navigate_to_time_card(web_page: webdriver.Firefox) -> None:
     """
     logging.info("Navigating to time card started.")
     try:
-        WebDriverWait(web_page, 15).until(EC.presence_of_element_located((By.CLASS_NAME, "first")))
+        WebDriverWait(web_page, 30).until(EC.presence_of_element_located((By.CLASS_NAME, "first")))
         web_page.get(TIMECARD_URL)
         timecard_elem = WebDriverWait(web_page, 10).until(EC.presence_of_all_elements_located((By.CLASS_NAME, 'first')))
         timecard_elem[3].click()
