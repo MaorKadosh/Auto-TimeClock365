@@ -3,7 +3,7 @@ import logging
 from time import sleep
 from sys import platform
 from time import strftime
-from dotenv import load_dotenv
+from dotenv import dotenv_values
 from selenium import webdriver
 from telegram.ext import ExtBot 
 from telegram import TelegramError
@@ -16,18 +16,18 @@ from webdriver_manager.firefox import GeckoDriverManager
 from selenium.webdriver.support import expected_conditions as EC
 
 # Loads constants
-load_dotenv(".env")
-BASE_URL = os.getenv("BASE_URL")
-TIMECARD_URL = os.getenv("TIMECARD_URL")
-USERNAME = os.getenv("TIME_CLOCK365_USERNAME")
-PASSWORD = os.getenv("TIME_CLOCK365_PASSWORD")
-os.environ["GH_TOKEN"] = os.getenv("GH_TOKEN")
-SHIFT_START_TIME = strftime("%d.%m.20%y, ") + os.getenv("SHIFT_START_TIME")
-SHIFT_END_TIME = strftime("%d.%m.20%y, ") + os.getenv("SHIFT_END_TIME")
-HEADLESS = True if os.getenv("HEADLESS") == 'True' else False
-OPERATIONAL = True if os.getenv("OPERATIONAL") == 'True' else False
-TELEGRAM_TOKETN = os.getenv("TELEGRAM_TOKEN")   
-TELEGRAM_ID = int(os.getenv("TELEGRAM_USER_ID"))
+config = dotenv_values(".env")
+BASE_URL = config['BASE_URL']                   #os.getenv("BASE_URL")
+TIMECARD_URL = config['TIMECARD_URL']           #os.getenv("TIMECARD_URL")
+USERNAME = config['TIME_CLOCK365_USERNAME']     #os.getenv("TIME_CLOCK365_USERNAME")
+PASSWORD = config['TIME_CLOCK365_PASSWORD']     #os.getenv("TIME_CLOCK365_PASSWORD")
+os.environ["GH_TOKEN"] = config['GH_TOKEN']     #os.getenv("GH_TOKEN")
+SHIFT_START_TIME = strftime("%d.%m.20%y, ") + config['SHIFT_START_TIME']#os.getenv("SHIFT_START_TIME")
+SHIFT_END_TIME = strftime("%d.%m.20%y, ") + config['SHIFT_END_TIME']#os.getenv("SHIFT_END_TIME")
+HEADLESS = True if config['HEADLESS'] == 'True' else False
+OPERATIONAL = True if config['OPERATIONAL'] == 'True' else False
+TELEGRAM_TOKETN = config['TELEGRAM_TOKEN']                              #os.getenv("TELEGRAM_TOKEN")   
+TELEGRAM_ID = int(config['TELEGRAM_USER_ID'])
 
 
 def reporter(message: str, image_path: str=None) -> None:
