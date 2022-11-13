@@ -54,7 +54,7 @@ def init() -> webdriver.Firefox:
     try:
         opt = Options()
         opt.headless = HEADLESS
-
+        logging.info(f'Firefox Headless mode is set to: {opt.headless}, .env operator is: {HEADLESS}')
         # Check running OS in order to start session correctly.
         if "win32" in platform:
             web_page = webdriver.Firefox(options=opt, service=Service(GeckoDriverManager().install()))
