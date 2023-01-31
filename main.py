@@ -97,8 +97,8 @@ def validate_punch_in(web_page: webdriver.Firefox) -> None :
         timeclock_shift_end_time = ", ".join(punch_time_row_element[1].text.replace("/", ".").replace(" ", "").split("\n"))
 
         # converting string year format 19.07.22 -> 19.07.2022
-        timeclock_shift_start_time = timeclock_shift_start_time.replace("22", strftime('20%y'))
-        timeclock_shift_end_time = timeclock_shift_end_time.replace("22", strftime('20%y'))
+        timeclock_shift_start_time = timeclock_shift_start_time.replace(strftime('%y'), strftime('20%y'))
+        timeclock_shift_end_time = timeclock_shift_end_time.replace(strftime('%y'), strftime('20%y'))
 
         # comparing shift info with puched in.
         if (timeclock_shift_start_time == SHIFT_START_TIME) and (timeclock_shift_end_time == SHIFT_END_TIME):
